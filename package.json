@@ -1,0 +1,24 @@
+{
+  "name": "jsratecards",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "babel-watch": "^7.0.0",
+    "jest": "^24.7.1",
+    "serve": "^11.0.0"
+  },
+  "jest": {
+    "setupFiles": [
+      "./code.js"
+    ]
+  }
+}
