@@ -46,13 +46,13 @@ export function getUniqueKeys(x) {
 function getDaigramDataFromRateCards(feeType, rateCards) {
   var rateCardsFilteredByFeeType = R.filter((card) => card[2] === feeType, rateCards);
   var groups = getProductGroups(rateCardsFilteredByFeeType);
-  return groups.map((group, index) => {
-    return {
+  return R.chain(x => x, groups.map((group, index) => {
+    return [{
       key: index.toString(),
       name: group[0][1] + '?',
       color: 'blue',
-    };
-  }, groups);
+    }];
+  }, groups));
   // return [
   //   { key: "1",              name: "New Build?", color: "red", net: "Net: £40"   },
   //   { key: "2", parent: "1", name: "Demeter", color: "green"    },
