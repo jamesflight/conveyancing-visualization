@@ -18,15 +18,14 @@ function init(allRateCards) {
       document.getElementById("wrapper").appendChild(node);
       var tree = createTreeStructure(el, allRateCards);
       var map = tree_chartmap(tree);
+      // map = flattenExtraConditions(el, map);
       map = flattenPurchase(el, map);
-      map = flattenExtraConditions(el, map);
       createDiagram(node.id, map); 
     })
 }
 
 function flattenPurchase(feeType, map) {
   var purchaseLevelOnly = R.filter((obj) => obj.level === 2, map);
-  console.log(purchaseLevelOnly);
   if (purchaseLevelOnly.length === 4) {
     return map;
   }
@@ -48,7 +47,25 @@ function flattenPurchase(feeType, map) {
 }
 
 function flattenExtraConditions(feeType, map) {
+  var potentialItemsToRemove = R.filter((item) => item.level === 3 && isOnlyItemForParentInMap(item, map), map);
+  console.log(potentialItemsToRemove);
+  R.map((item) => {
+    if (item.name === "All quotes") {
+      map = R.reject((rejectItem) => rejectItem.key === item.key, map);
+      map = R.map((mapItem) => {
+        if (mapItem.parent === item.key) {
+          mapItem.parent = item.parent;
+        }
+        return mapItem;
+      }, map);
+    }
+  }, potentialItemsToRemove);
   return map;
+}
+
+function isOnlyItemForParentInMap(item, map) {
+  var filter =  R.filter((innerItem) => innerItem.parent === item.parent, map);
+  return filter.length === 1 ? true : false;
 }
 
 function createDiagram(divId, data) {
