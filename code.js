@@ -18,8 +18,7 @@ function init(allRateCards) {
       document.getElementById("wrapper").appendChild(node);
       var tree = createTreeStructure(el, allRateCards);
       var map = tree_chartmap(tree);
-      // map = flattenExtraConditions(el, map);
-      map = flattenPurchase(el, map);
+      // map = flattenPurchase(el, map);
       createDiagram(node.id, map); 
     })
 }
@@ -46,23 +45,6 @@ function flattenPurchase(feeType, map) {
   return map;
 }
 
-function flattenExtraConditions(feeType, map) {
-  var potentialItemsToRemove = R.filter((item) => item.level === 3 && isOnlyItemForParentInMap(item, map), map);
-  console.log(potentialItemsToRemove);
-  R.map((item) => {
-    if (item.name === "All quotes") {
-      map = R.reject((rejectItem) => rejectItem.key === item.key, map);
-      map = R.map((mapItem) => {
-        if (mapItem.parent === item.key) {
-          mapItem.parent = item.parent;
-        }
-        return mapItem;
-      }, map);
-    }
-  }, potentialItemsToRemove);
-  return map;
-}
-
 function isOnlyItemForParentInMap(item, map) {
   var filter =  R.filter((innerItem) => innerItem.parent === item.parent, map);
   return filter.length === 1 ? true : false;
@@ -84,9 +66,10 @@ function createDiagram(divId, data) {
     new go.Binding("fill", "color")),
   $(go.Panel, "Horizontal",
     { defaultAlignment: go.Spot.Left, margin: 5 },
-    $(go.TextBlock, { row: 1, column: 1, font: '12pt sans-serif' }, new go.Binding("text", "name")),
-    $(go.TextBlock, { row: 2, column: 1, font: '12pt sans-serif' }, new go.Binding("text", "gross")),
-    $(go.TextBlock, { row: 3, column: 1, font: '12pt sans-serif' }, new go.Binding("text", "per_applicant")),
+    $(go.TextBlock, { row: 1, column: 1, font: 'bold 12pt sans-serif' }, new go.Binding("text", "title")),
+    $(go.TextBlock, { row: 2, column: 2, font: '12pt sans-serif' }, new go.Binding("text", "name")),
+    $(go.TextBlock, { row: 3, column: 1, font: '12pt sans-serif' }, new go.Binding("text", "gross")),
+    $(go.TextBlock, { row: 4, column: 1, font: '12pt sans-serif' }, new go.Binding("text", "per_applicant")),
   )
 );
   
@@ -236,6 +219,7 @@ function tree_chartmap(tree) {
     map.push({
       parent: 'start',
       key: product,
+      title: "Product category: ",
       name: product,
       color: '#B5D3E7',
       level: 2,
@@ -246,6 +230,7 @@ function tree_chartmap(tree) {
         map.push({
           parent: product,
           key: product + extraConditions,
+          title: "Applies to: ",
           name: 'New build',
           color: '#B5D3E7',
           level: 3
@@ -256,6 +241,7 @@ function tree_chartmap(tree) {
         map.push({
           parent: product,
           key: product + extraConditions,
+          title: "Attempt to apply to:",
           name: 'Auction',
           color: '#B5D3E7',
           level: 3
@@ -266,6 +252,7 @@ function tree_chartmap(tree) {
         map.push({
           parent: product,
           key: product + extraConditions,
+          title: "Attempt to apply to:",
           name: 'Gifted Deposit',
           color: '#B5D3E7',
           level: 3
@@ -276,6 +263,7 @@ function tree_chartmap(tree) {
         map.push({
           parent: product,
           key: product + extraConditions,
+          title: "Attempt to apply to:",
           name: 'Help to Buy (Equity Loan)',
           color: '#B5D3E7',
           level: 3
@@ -286,6 +274,7 @@ function tree_chartmap(tree) {
         map.push({
           parent: product,
           key: product + extraConditions,
+          title: "Attempt to apply to:",
           name: 'Help to Buy (ISA)',
           color: '#B5D3E7',
           level: 3
@@ -296,6 +285,7 @@ function tree_chartmap(tree) {
         map.push({
           parent: product,
           key: product + extraConditions,
+          title: "Attempt to apply to:",
           name: 'Right To Buy',
           color: '#B5D3E7',
           level: 3
@@ -306,6 +296,7 @@ function tree_chartmap(tree) {
         map.push({
           parent: product,
           key: product + extraConditions,
+          title: "Attempt to apply to:",
           name: 'Shared Ownership',
           color: '#B5D3E7',
           level: 3
@@ -316,27 +307,30 @@ function tree_chartmap(tree) {
           map.push({
             parent: product,
             key: product + extraConditions,
-            name: 'All quotes',
+            title: "Attempt to apply to:",
+            name: 'All ' + product + ' quotes',
             color: '#B5D3E7',
             level: 3
           });
       }
         
       R.mapObjIndexed((originatorGroup, originator) => {
-        originator = originator ? originator : "OtherClients";
+        originator = originator ? originator : "All Other Clients";
         map.push({
           parent: product + extraConditions,
           key: product + extraConditions + originator,
+          title: 'Client: ',
           name: originator,
           color: '#B5D3E7',
           level: 4
         });
 
         R.mapObjIndexed((countryGroup, country) => {
-          country = country ? country : "OtherCountries"
+          country = country ? country : "All Countries"
           map.push({
             parent: product + extraConditions + originator,
             key: product + extraConditions + originator + country,
+            title: "Applies to: ",
             name: country,
             color: '#B5D3E7',
             level: 5
