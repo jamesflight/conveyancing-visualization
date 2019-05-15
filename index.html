@@ -122,7 +122,7 @@
        */
       function listMajors() {
         gapi.client.sheets.spreadsheets.values.get({
-          spreadsheetId: '1iID1H3e298cF8w7TEeo1YJy9S9-Uw3SRvRCcaYHzILE',
+          spreadsheetId: '1UMMCgV7ekg4vpaf9UP8UjjAz13gHPSoi_1ajRB6sx7Y',
           range: 'A2:AC',
         }).then(function(response) {
           init(response.result.values);
